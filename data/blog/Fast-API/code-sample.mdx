@@ -1,0 +1,337 @@
+---
+title: Introducción a FastAPI
+date: '8-10-2023'
+tags: ['FastAPI', 'code', 'Backend', 'Python']
+draft: false
+summary: Una breve introducción a FastAPI y su capacidad para desarrollar APIs de manera eficiente en Python.
+---
+
+# FastAPI: Desarrollo Rápido de APIs en Python
+
+
+FastAPI es un framework reconocido por se rápido y sencillo de utilizar para crear API, En esta post vas a obtener una guía básica para saber crear un API sencilla que utilizar las solicitudes HTTP (GET, POST, PUT, DELETE).
+
+El post se va a dividir en la explicación de las diferentes herramientas como  con las que cuenta FastAPI y al final se muestra un breve ejemplo de todas las herramientas en una aplicación real.
+
+## Alistar entorno de desarrollo
+
+Necesitamos tener previamente instalado una version de python mayor o igual a la 3.6 para que pueda funcionar FastAPI, después creamos una nueva carpeta donde vamos a tener el proyecto, dentro de la carpeta creamos un entorno virtual de python con los siguientes comandos:
+
+1. `python3 -m venv <nombre_del_virtual_environment>` Crea el entorno virtual de python que tiene independencia con los diferentes proyectos existentes en la maquina, después procedemos a activarlo.
+
+2. `source <nombre_del_virtual_environment>/bin/activate` Activa el entorno virtual y finalizamos instalando con FastAPI.
+
+3. `pip install fastapi "uvicorn[standard]"` Instala el framework de FastAPI y Uvicorn es un servidor ASGI (Asynchronous Server Gateway Interface) que permite ejecutar la aplicación FastAPI y gestionar las solicitudes entrantes .
+
+## Aplicación FastAPI
+
+Para crear una API con FastAPI solamente es necesario crear un archivo llamado `main.py` en la carpeta del proyecto donde estamos trabajando, importar del framework de fastapi la clase FastAPI para crear una instancia llamada app, luego se utilizar el decorador `@app.get("/home")` se utiliza para registrar la ruta home y configuraciones.
+
+```python
+from fastapi import FastAPI # 1. Importar framework
+
+app = FastAPI() # 2. Crear una instancia de FastAPI
+
+@app.get("/home") # 3. Establecer ruta "/home"
+def hola(): # 4. Crear función llamada hola 
+    return {"respuesta": "hola mundo"} # 5. Establecer la respuesta
+```
+
+Para ahora ejecutamos el siguiente comando:
+
+`uvicorn main:app —reload` Ejecuta el servidor de Uvicorn en la maquina y podemos hacer a el mediante el puerto local [127.0.0.1:8000/home](http://127.0.0.1:8000/home).
+
+![Untitled](FastAPI%20Desarrollo%20Ra%CC%81pido%20de%20APIs%20en%20Python%20bab39cba19804d61b5fb6c4fad299734/Untitled.png)
+
+Respuesta de la ruta /home.
+
+FastAPI utiliza la herramienta de documentación automática llamada "Swagger UI" y la generación de la especificación OpenAPI, como muestra la siguiente imagen. Esto nos facilita conocer la como está construida la API a los demás desarrolladores y mantener orden.
+
+![Untitled](FastAPI%20Desarrollo%20Ra%CC%81pido%20de%20APIs%20en%20Python%20bab39cba19804d61b5fb6c4fad299734/Untitled%201.png)
+
+## Métodos de fastAPI
+
+Hacen referencia a los parámetros de entrada que se obtienen mediante la URL
+
+Las operaciones de ruta en FastAPI determinan cómo se gestionan las solicitudes HTTP entrantes en tu aplicación, entre ellas las más comunes y sus respectivos usos son GET (solicitar), PUT (actualizar un recurso), POST (enviar datos) y DELETE (eliminar un recurso). 
+
+Este es el ejemplo más breve de la creación de una API con FastAPI, para crear una API con FastAPI se necesita, 
+
+To make the code work, you need to replace the variables and contents inside the function definitions with your own, and also define the route variable with the desired endpoint. Here's an example:
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/users")
+def get_users():
+    # código para obtener usuarios de la base de datos
+    return {"users": users}
+
+@app.post("/users")
+def create_user(user: dict):
+    # código para crear un nuevo usuario en la base de datos
+    return {"message": "Usuario creado exitosamente"}
+
+@app.put("/users/{user_id}")
+def update_user(user_id: int, user: dict):
+    # código para actualizar un usuario en la base de datos
+    return {"message": f"Usuario con ID {user_id} actualizado exitosamente"}
+
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int):
+    # ejemplo de código para eliminar un usuario de la base de datos
+    return {"message": f"Usuario con ID {user_id} eliminado exitosamente"}
+
+```
+
+En este ejemplo, definimos cuatro puntos finales para operaciones CRUD en un recurso hipotético de "usuarios". Los decoradores `@app.get`, `@app.post`, `@app.put` y `@app.delete` definen el método HTTP que se usará para el punto final, y la variable de ruta define la URL del punto final. Los cuerpos de las funciones deben contener la lógica para manejar solicitudes en ese punto final.
+
+## Crear esquema de pydentic con typing
+
+Aquí hay un ejemplo de un esquema Pydantic con typing para utilizar una clase de datos de tipo opcional:
+
+```python
+from pydantic import BaseModel
+from typing import Optional
+
+class User(BaseModel):
+    id: Optional[int] = None
+    username: str
+    email: str
+    age: int = None
+```
+
+En este ejemplo, definimos un modelo Pydantic llamado `User` con cuatro campos: `id`, `username`, `email` y `age`. El campo `id` es un entero, mientras que los campos `username` y `email` son cadenas. El campo `age` es un entero opcional, como se indica por el valor predeterminado `= None`. Al usar este modelo en el código, podemos crear un nuevo objeto `User` pasando valores para los campos, así:
+
+```python
+new_user = User(id=1, username='jdoe', email='jdoe@example.com')
+```
+
+También podemos validar los datos entrantes contra este esquema usando el método `parse_obj` de Pydantic:
+
+```python
+data = {'id': 2, 'username': 'jsmith', 'email': 'jsmith@example.com', 'age': 30}
+user = User.parse_obj(data)
+```
+
+Si los datos no coinciden con el esquema, Pydantic generará un error de validación.
+
+### Crear esquema guía
+
+To create an example class config json_schema in a BaseModel class in FastAPI, you would define the class within the BaseModel class using the `Config` class. For example:
+
+```python
+from typing import List
+from pydantic import BaseModel
+
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+    age: int = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": 1,
+                "name": "John Doe",
+                "email": "johndoe@example.com",
+                "age": 30
+            }
+        }
+
+```
+
+In this example, we define a `User` class that inherits from `BaseModel`. We then define the `Config` class within the `User` class, and set the `schema_extra` attribute to a dictionary representing an example JSON object that matches the structure of the `User` class.
+
+When FastAPI generates documentation for the API endpoint that uses the `User` class, it will include this example JSON object in the generated OpenAPI schema.
+
+## Query y parámetro Body()
+
+### Query
+
+El parámetro de consulta se utiliza para obtener datos de la URL y se proporciona después del signo de interrogación "?". Este es un ejemplo de cómo utilizar Query en FastAPI:
+
+```python
+from fastapi import FastAPI, Query
+
+app = FastAPI()
+
+@app.get("/items/")
+async def read_items(q: str = Query(None, max_length=50)): # Valdiacion del query con el paramtro max_length
+    results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
+```
+
+### Parámetro Body
+
+El parámetro de cuerpo se utiliza para enviar datos en una solicitud HTTP y se proporciona en el cuerpo de la solicitud. Este es un ejemplo de cómo utilizar el parámetro Body en FastAPI:
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class Item(BaseModel):
+    name: str
+    description: str = None
+    price: float
+    tax: float = None
+
+@app.post("/items/")
+async def create_item(item: Item):
+    return item
+
+```
+
+En este ejemplo, definimos una clase de modelo Pydantic llamada Item que se utiliza para validar los datos enviados en el cuerpo de la solicitud. Luego, definimos una ruta `@app.post` que acepta un objeto Item como parámetro. Si los datos enviados cumplen con las restricciones definidas en la clase Item, se devuelve el objeto Item en la respuesta.
+
+En FastAPI, los parámetros de validación en la consulta y la ruta pueden incluir lo siguiente:
+
+### Parámetros de consulta y parámetros de ruta
+
+- **default**: Especifica el valor predeterminado para el parámetro si no se proporciona.
+- **`min_length`** Especifica la longitud mínima del valor del parámetro.
+- **`max_length`** Especifica la longitud máxima del valor del parámetro.
+- **`gt`** Especifica que el valor del parámetro debe ser mayor que un valor dado.
+- *`ge**` Especifica que el valor del parámetro debe ser mayor o igual que un valor dado.
+- **`lt`** Especifica que el valor del parámetro debe ser menor que un valor dado.
+- *`le**` Especifica que el valor del parámetro debe ser menor o igual que un valor dado.
+- **`regex`** Especifica una expresión regular que el valor del parámetro debe coincidir.
+
+## Respuestas
+
+FastAPI admite diferentes tipos de respuestas, incluyendo respuesta JSON, respuesta HTML y respuesta de archivo.
+
+Aquí hay un ejemplo de cada tipo de respuesta:
+
+```python
+from fastapi import FastAPI, Response, HTMLResponse, FileResponse, JSONResponse
+
+app = FastAPI()
+
+@app.get("/json")
+async def json_response():
+    return {"message": "Esta es una respuesta JSON"}
+
+@app.put("/items")
+def JSON_Response(id: str, item: Item):
+    json_compatible_item_data = jsonable_encoder(item)
+    return JSONResponse(content=json_compatible_item_data)
+
+@app.get("/html", response_class=HTMLResponse)
+async def html_response():
+    return "<html><body><h1>Esta es una respuesta HTML</h1></body></html>"
+
+@app.get("/file")
+async def file_response():
+    file_path = "ruta/al/archivo.pdf"
+    return FileResponse(file_path, media_type="application/pdf", filename="archivo.pdf")
+
+```
+
+En este ejemplo, definimos tres rutas que devuelven diferentes tipos de respuestas. La ruta `json_response` devuelve una respuesta JSON, la ruta `JSON_Response` pasa la respuesta en JSON, pero utilizando un encoder para transformar los datos en JSON y devolver los dados sin ser transformados por el método `JSONResponse`, la ruta `html_response` devuelve una respuesta HTML utilizando la clase `HTMLResponse`, y la ruta `file_response` devuelve una respuesta de archivo utilizando la clase `FileResponse`.
+
+La clase `FileResponse` toma la ruta al archivo como su primer argumento y el tipo de medio y el nombre de archivo como argumentos opcionales.
+
+## Código de estado
+
+HTTP responses include a status code, which is a three-digit number that indicates the outcome of the request made by the client. The first digit of the status code indicates the general category of the response. The most common status codes and their general categories include:
+
+- 2xx (Successful): The request was successful.
+- 3xx (Redirection): The request was not successful, but the client can try again with a different URL.
+- 4xx (Client Error): The request was not successful due to an error on the client's side.
+- 5xx (Server Error): The request was not successful due to an error on the server's side.
+
+HTTP responses also include headers, which provide additional information about the response, and a message body, which contains the data that the server is sending back to the client.
+
+Ejemplo:
+
+```python
+@app.get('/movies/{id}', tags=['movies'], response_model=Movie)
+def get_movie(id: int = Path(ge=1, le=2000)) -> Movie:
+    for item in movies:
+        if item["id"] == id:
+            return JSONResponse(content=item, status_code=200) # retorna el estado 200
+    return JSONResponse(status_code=404, content=[]) # retorna el error 404
+```
+
+## Autentificación
+
+Para llevar a cabo la autenticación, se utilizará la librería jwt. Para instalarla, basta con ejecutar el siguiente comando:
+
+```python
+pip install pyjwt
+
+```
+
+Una vez instalada, se puede crear el token utilizando el método `encode`, y posteriormente decodificarlo mediante el método `decode`.
+
+```python
+from jwt import encode, decode
+
+def create_token(data: dict) -> str:
+"""
+payload infomacion a codificar, key es llave con la cual se va a codificar y algorithm es algo
+"""
+    token: str = encode(payload=data, key="my_secret_key", algorithm="HS256")
+    return token
+
+def validate_token(token: str) -> dict:
+    data: dict = decode(token, key="my_secret_key", algorithms=['HS256'])
+    return data
+
+```
+
+Para obtener la información, se llama al método que genera el token. Además, se genera un modelo de datos que se introducirá en el sistema, en este caso el correo electrónico y la contraseña.
+
+```python
+class User(BaseModel):
+    email:str
+    password:str
+
+```
+
+Finalmente, se tiene una función que se encarga de verificar si el usuario es válido, y en caso afirmativo, se crea el token correspondiente y se envía en la respuesta.
+
+```python
+@app.post('/login', tags=['auth'])
+def login(user: User):
+    if user.email == "admin@gmail.com" and user.password == "admin":
+        token: str = create_token(user.dict())
+        return JSONResponse(status_code=200, content=token)
+
+```
+
+## **Middlewares de autenticación**
+
+En la implementación de middlewares de autenticación, se utiliza el método Depends, Request y HTTPBearer para importar las dependencias necesarias.
+
+```python
+from fastapi import Depends, Request
+from fastapi.security import HTTPBearer
+
+class JWTBearer(HTTPBearer):
+    async def __call__(self, request: Request):#se llama el metodo call que devuleve las credenciales
+        auth = await super().__call__(request) #retorna credenciales
+        data = validate_token(auth.credentials) #valida las credenciales y retorna el token con la info
+        if data['email'] != "admin@gmail.com":
+            raise HTTPException(status_code=403, detail="Credenciales son invalidas")
+
+```
+
+Posteriormente, se importa como parámetro de la función en el endpoint correspondiente.
+
+```python
+@app.get('/movies', tags=['movies'], response_model=List[Movie], status_code=200, dependencies=[Depends(JWTBearer())])
+def get_movies() -> List[Movie]:
+    return JSONResponse(status_code=200, content=movies)
+
+```
+
+De esta manera, se asegura que se implemente un middleware de autenticación en el endpoint /movies para garantizar que solo los usuarios autorizados puedan acceder a la información. El middleware JWTBearer se encarga de validar las credenciales del usuario y proporcionar un token con la información necesaria. Además, se establece una condición para permitir el acceso solo a los usuarios con correo electrónico "[admin@gmail.com](mailto:admin@gmail.com)".
