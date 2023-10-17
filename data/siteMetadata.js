@@ -1,22 +1,22 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: "Anderson's Blog",
+  title: "Anderson Code",
   author: 'Anderson Morillo Diaz',
-  headerTitle: 'Anderson crea',
-  description: 'A blog created with Next.js and Tailwind.css',
-  language: 'es-co',
+  headerTitle: 'Anderson Code',
+  description: 'A blog about web development, programming, and computer science.',
+  language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  siteUrl: 'https://blog-project-next-tailwind.vercel.app/',
+  siteRepo: 'https://github.com/andersonmorillo/blog_project_next_tailwind/tree/dev',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
-  email: 'address@yoursite.com',
-  github: 'https://github.com',
+  email: 'andersonmorillodiaz31@gmail.com',
+  github: 'https://github.com/andersonmorillo?tab=repositories',
   twitter: 'https://twitter.com/Twitter',
   facebook: 'https://facebook.com',
   youtube: 'https://youtube.com',
-  linkedin: 'https://www.linkedin.com',
+  linkedin: 'https://www.linkedin.com/in/anderson-morillo-diaz-792515153/',
   locale: 'en-US',
   analytics: {
     // If you want to use an analytics provider you have to add it to the
