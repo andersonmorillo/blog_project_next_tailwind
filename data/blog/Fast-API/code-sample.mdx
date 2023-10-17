@@ -57,32 +57,56 @@ Las operaciones de ruta en FastAPI determinan cómo se gestionan las solicitudes
 
 Este es el ejemplo más breve de la creación de una API con FastAPI, para crear una API con FastAPI se necesita, 
 
-To make the code work, you need to replace the variables and contents inside the function definitions with your own, and also define the route variable with the desired endpoint. Here's an example:
+Para que el código funcione, debe reemplazar las variables y el contenido dentro de las definiciones de la función con las suyas propias, y también definir la variable de ruta con el punto final deseado. Aquí hay un ejemplo:
+
 
 ```python
 from fastapi import FastAPI
-
 app = FastAPI()
 
-@app.get("/users")
+users_db = {
+    1: {
+        "username": "usuario1",
+        "email": "usuario1@example.com",
+        "age": 30
+    },
+    2: {
+        "username": "usuario2",
+        "email": "usuario2@example.com",
+        "age": 25
+    }
+}
+
 def get_users():
-    # código para obtener usuarios de la base de datos
-    return {"users": users}
+    return {"users": users_db}
+def create_user(user_id: int, user_data: dict):
+    users_db[user_id] = user_data
+def update_user(user_id: int, user_data: dict):
+    if user_id in users_db:
+        users_db[user_id].update(user_data)
+def delete_user(user_id: int):
+    if user_id in users_db:
+        del users_db[user_id]
+
+@app.get("/users")
+def read_users():
+    return get_users()
 
 @app.post("/users")
-def create_user(user: dict):
-    # código para crear un nuevo usuario en la base de datos
+def create_user_route(user_id: int, user_data: dict):
+    create_user(user_id, user_data)
     return {"message": "Usuario creado exitosamente"}
 
 @app.put("/users/{user_id}")
-def update_user(user_id: int, user: dict):
-    # código para actualizar un usuario en la base de datos
+def update_user_route(user_id: int, user_data: dict):
+    update_user(user_id, user_data)
     return {"message": f"Usuario con ID {user_id} actualizado exitosamente"}
 
 @app.delete("/users/{user_id}")
-def delete_user(user_id: int):
-    # ejemplo de código para eliminar un usuario de la base de datos
+def delete_user_route(user_id: int):
+    delete_user(user_id)
     return {"message": f"Usuario con ID {user_id} eliminado exitosamente"}
+
 
 ```
 
@@ -120,7 +144,7 @@ Si los datos no coinciden con el esquema, Pydantic generará un error de validac
 
 ### Crear esquema guía
 
-To create an example class config json_schema in a BaseModel class in FastAPI, you would define the class within the BaseModel class using the `Config` class. For example:
+Para crear una json_schema de configuración de clase de ejemplo en una clase BaseModel en FastAPI, debe definir la clase dentro de la clase BaseModel utilizando la clase 'Config'. Por ejemplo:
 
 ```python
 from typing import List
@@ -144,7 +168,7 @@ class User(BaseModel):
 
 ```
 
-In this example, we define a `User` class that inherits from `BaseModel`. We then define the `Config` class within the `User` class, and set the `schema_extra` attribute to a dictionary representing an example JSON object that matches the structure of the `User` class.
+En este ejemplo, definimos una clase 'User' que hereda de 'BaseModel'. Luego definimos la clase 'Config' dentro de la clase 'User' y establecemos el atributo 'schema_extra' en un diccionario que representa un objeto JSON de ejemplo que coincide con la estructura de la clase 'User'.
 
 When FastAPI generates documentation for the API endpoint that uses the `User` class, it will include this example JSON object in the generated OpenAPI schema.
 
@@ -248,7 +272,7 @@ HTTP responses include a status code, which is a three-digit number that indicat
 - 4xx (Client Error): The request was not successful due to an error on the client's side.
 - 5xx (Server Error): The request was not successful due to an error on the server's side.
 
-HTTP responses also include headers, which provide additional information about the response, and a message body, which contains the data that the server is sending back to the client.
+Las respuestas HTTP también incluyen encabezados, que proporcionan información adicional sobre la respuesta, y un cuerpo del mensaje, que contiene los datos que el servidor envía de vuelta al cliente.
 
 Ejemplo:
 
